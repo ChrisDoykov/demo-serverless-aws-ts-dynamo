@@ -4,6 +4,10 @@ This project has been generated using the `aws-nodejs-typescript` template from 
 
 For detailed instructions, please refer to the [documentation](https://www.serverless.com/framework/docs/providers/aws/).
 
+## TODOs:
+
+- Figure out a way to run Dynamo via docker compose in CI/CD to be able to run tests against
+
 ## Installation/deployment instructions
 
 Depending on your preferred package manager, follow the instructions below to deploy your project.
