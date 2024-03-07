@@ -1,0 +1,85 @@
+name: Deploy App
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - staging
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  REGION: ${{ secrets.REGION }}
+  NODE_VERSION: ${{secrets.NODE_VERSION}}
+
+jobs:
+  logger:
+    name: (Useful) Log github related information
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "'Beautify' branch names"
+        id: branch-names
+        uses: tj-actions/branch-names@v8
+
+      - name: Get the branch name of the target of a PR
+        run: |
+          echo "TARGET_BRANCH_PR=${{ steps.branch-names.outputs.base_ref_branch }}" >> $GITHUB_ENV
+
+      - name: Log PR info
+        run: 'echo "Merged: ${{github.event.pull_request.merged}}" PR Title: ${{github.event.pull_request.title}}'
+
+      - name: Log commit info
+        run: 'echo "Head commit message: ${{github.event.head_commit.message}}" Commits[0] message: ${{github.event.commits[0].message}} '
+
+      - name: Log ref and PR Target Branch
+        run: 'echo "Github ref: ${{github.ref}}" PR Target: ${{env.TARGET_BRANCH_PR}}'
+
+  # IMPORTANT: If you want to run cleanup just commit and update the version with a message that contains the value of vars.DESTROY_KEYWORD (case-insensitive)
+  cleanup:
+    name: Clean up
+    runs-on: ubuntu-latest
+    if: ${{ startsWith(github.event.pull_request.title, vars.DESTROY_KEYWORD) || (startsWith(github.event.head_commit.message, 'v') && startsWith(github.event.commits[0].message, vars.DESTROY_KEYWORD)) || startsWith(github.event.head_commit.message, vars.DESTROY_KEYWORD) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: yarn
+          cache-dependency-path: ./package.json
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: (Serverless) Remove
+        uses: serverless/github-action@v3.2
+        with:
+          args: remove
+        env:
+          # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          # or if using AWS credentials directly
+          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: yarn
+          cache-dependency-path: ./package.json
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 📥 Install deps
+        run: yarn install --immutable
+
+      - name: Run tests
+        run: yarn test:int --coverage

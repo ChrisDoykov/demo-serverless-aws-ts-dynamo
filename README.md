@@ -23,6 +23,8 @@ This projects currently has only 1 test suite of integration tests (`src/service
 
 This will start up a local DynamoDB container to execute the tests against. After the tests complete/fail the cleanup script will destroy the container.
 
+There are also sample global Jest setup and teardown files in the root. `jest.int.setup.ts` will take care of creating the necessary Dynamo tables and then `jest.int.teardown.ts` will take care of deleting them (although in this use case this doesn't matter because we destroy the container after the tests anyway but it's a good example).
+
 I've provided two different configuration files for unit (`jest.unit.config.ts`) and integration (`jest.int.config.ts`) testing.
 
 ### 3rd party libraries
