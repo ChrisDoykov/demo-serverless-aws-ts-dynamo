@@ -82,4 +82,4 @@ jobs:
         run: yarn install --immutable
 
       - name: Run tests
-        run: yarn test:int --coverage
+        run: yarn test:int
