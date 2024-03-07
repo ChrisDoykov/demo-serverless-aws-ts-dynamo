@@ -111,6 +111,7 @@ jobs:
       - name: 📥 Install deps
         run: yarn install --immutable
 
+      # TODO: Enable if you wish to deploy
       # - name: (Serverless) Deploy
       #   uses: serverless/github-action@v3.2
       #   with:
