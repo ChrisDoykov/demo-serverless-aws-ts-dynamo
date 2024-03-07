@@ -84,10 +84,10 @@ jobs:
       - name: 📥 Install deps
         run: yarn install --immutable
 
-    #   - name: Run tests
-    #     env:
-    #       IS_OFFLINE: ${{secrets.IS_OFFLINE}}
-    #     run: yarn test:int
+      - name: Run tests
+        env:
+          IS_OFFLINE: ${{secrets.IS_OFFLINE}}
+        run: yarn test:int
 
   deploy:
     name: Deploy
