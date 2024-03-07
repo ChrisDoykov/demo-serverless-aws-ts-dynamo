@@ -41,7 +41,7 @@ jobs:
   cleanup:
     name: Clean up
     runs-on: ubuntu-latest
-    if: ${{ startsWith(github.event.pull_request.title, vars.DESTROY_KEYWORD) || (startsWith(github.event.head_commit.message, 'v') && startsWith(github.event.commits[0].message, vars.DESTROY_KEYWORD)) || startsWith(github.event.head_commit.message, vars.DESTROY_KEYWORD) }}
+    if: ${{ vars.DESTROY_KEYWORD && (startsWith(github.event.pull_request.title, vars.DESTROY_KEYWORD) || (startsWith(github.event.head_commit.message, 'v') && startsWith(github.event.commits[0].message, vars.DESTROY_KEYWORD)) || startsWith(github.event.head_commit.message, vars.DESTROY_KEYWORD)) }}
 
     steps:
       - name: Checkout
@@ -53,6 +53,9 @@ jobs:
           cache: yarn
           cache-dependency-path: ./package.json
           node-version: ${{ env.NODE_VERSION }}
+
+      - name: 📥 Install deps
+        run: yarn install --immutable
 
       - name: (Serverless) Remove
         uses: serverless/github-action@v3.2
@@ -83,3 +86,30 @@ jobs:
 
       - name: Run tests
         run: yarn test:int
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: yarn
+          cache-dependency-path: ./package.json
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 📥 Install deps
+        run: yarn install --immutable
+
+      - name: (Serverless) Deploy
+        uses: serverless/github-action@v3.2
+        with:
+          args: deploy
+        env:
+          # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          # or if using AWS credentials directly
+          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
