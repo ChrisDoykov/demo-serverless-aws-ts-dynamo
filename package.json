@@ -1,6 +1,6 @@
 {
   "name": "aws-serverless-typescript-api",
-  "version": "2.0.6",
+  "version": "2.0.8",
   "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.ts",
   "scripts": {
@@ -9,7 +9,8 @@
     "integration-tests": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.int.config.ts",
     "integration-tests-cleanup": "docker-compose -f local.docker-compose.yml down",
     "pretest:int": "docker-compose -f local.docker-compose.yml up -d dynamodb-local",
-    "test:int": "LOCAL=true npm-run-all integration-tests integration-tests-cleanup --continue-on-error",
+    "test:int": "IS_OFFLINE=true npm-run-all integration-tests integration-tests-cleanup --continue-on-error",
+    "ci:test:int": "IS_OFFLINE=true NODE_OPTIONS=--experimental-vm-modules jest --config jest.int.config.ts",
     "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.unit.config.ts"
   },
   "engines": {

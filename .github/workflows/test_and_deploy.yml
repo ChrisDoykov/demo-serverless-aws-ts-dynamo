@@ -84,10 +84,14 @@ jobs:
       - name: 📥 Install deps
         run: yarn install --immutable
 
+      - name: Setup DynamoDB Local
+        uses: rrainn/dynamodb-action@v2.0.1
+        with:
+          port: 8000
+          cors: "*"
+
       - name: Run tests
-        env:
-          IS_OFFLINE: ${{secrets.IS_OFFLINE}}
-        run: yarn test:int
+        run: yarn ci:test:int
 
   deploy:
     name: Deploy

@@ -6,7 +6,13 @@ For detailed instructions, please refer to the [documentation](https://www.serve
 
 ## TODOs:
 
-- Figure out a way to run Dynamo via docker compose in CI/CD to be able to run tests against
+- Enable deployment to different Serverless environments from CI/CD
+
+## Notes on CI/CD:
+
+This project is setup so that it will run the `test_and_deploy.yml` workflow on a push to the `staging` branch or on a successful PR to the `main` branch.
+
+It does NOT as of yet support deployment to different environments so it just deploys to the `dev` one by default. It will run a local Dynamo in CI, run the tests, and finally (if uncommented) will deploy to AWS.
 
 ## Installation/deployment instructions
 
