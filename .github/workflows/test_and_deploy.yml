@@ -104,6 +104,14 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
+      - name: "'Beautify' branch names"
+        id: branch-names
+        uses: tj-actions/branch-names@v8
+
+      - name: Get the branch name of the target of a PR
+        run: |
+          echo "TARGET_BRANCH_PR=${{ steps.branch-names.outputs.base_ref_branch }}" >> $GITHUB_ENV
+
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
@@ -114,8 +122,8 @@ jobs:
       - name: 📥 Install deps
         run: yarn install --immutable
 
-      # TODO: Enable if you wish to deploy
       - name: (Serverless) Deploy
+        # Will run only on a merged PR on main or a push to staging
         if: ${{ !github.event.pull_request.id || (github.event.pull_request.merged && endsWith(env.TARGET_BRANCH_PR, 'main'))}}
         uses: serverless/github-action@v3.2
         with:
