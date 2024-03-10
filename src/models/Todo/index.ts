@@ -1,6 +1,6 @@
 import { equals } from "ramda";
 
-const { NODE_ENV } = process.env;
+const { NODE_ENV, DYNAMO_TABLE_NAME } = process.env;
 
 export default interface Todo {
   todosId: string;
@@ -12,4 +12,4 @@ export default interface Todo {
 
 export const TableName = equals(NODE_ENV, "test")
   ? "Test_TodosTable"
-  : "TodosTable";
+  : DYNAMO_TABLE_NAME;

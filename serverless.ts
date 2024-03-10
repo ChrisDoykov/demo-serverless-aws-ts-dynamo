@@ -19,9 +19,11 @@ const serverlessConfiguration: AWS = {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
     },
+    stage: "${opt:stage, 'dev'}",
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
+      DYNAMO_TABLE_NAME: "${self:custom.dynamoTableName}",
     },
     iam: {
       role: {
@@ -65,13 +67,14 @@ const serverlessConfiguration: AWS = {
       },
       stages: ["local", "dev"],
     },
+    dynamoTableName: "TodosTable-${self:provider.stage}",
   },
   resources: {
     Resources: {
       TodosTable: {
         Type: "AWS::DynamoDB::Table",
         Properties: {
-          TableName: "TodosTable",
+          TableName: "${self:custom.dynamoTableName}",
           AttributeDefinitions: [
             {
               AttributeName: "todosId",
