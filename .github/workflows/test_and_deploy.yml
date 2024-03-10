@@ -125,7 +125,6 @@ jobs:
         run: yarn install --immutable
 
       - name: (Serverless) Deploy
-
         # Will run only on a closed (merged) PR on main or a push to staging
         if: ${{ !github.event.pull_request.id || (github.event.pull_request.merged && endsWith(env.TARGET_BRANCH_PR, 'main'))}}
         uses: serverless/github-action@v3.2
