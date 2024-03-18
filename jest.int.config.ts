@@ -1,5 +1,4 @@
 import { Config } from "jest";
-const esModules = ["@middy"].join("|");
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
@@ -18,5 +17,4 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: [`node_modules/(?!${esModules})`],
 } as Config;
