@@ -45,7 +45,6 @@ const serverlessConfiguration: AWS = {
       },
     },
   },
-  // import the function via paths
   functions: { getAllTodos, createTodo, getTodo, updateTodo, deleteTodo },
   package: { individually: true },
   custom: {
